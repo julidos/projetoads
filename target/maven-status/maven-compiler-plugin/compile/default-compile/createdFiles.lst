@@ -1,0 +1,5 @@
+com\projeto\ads\ProjetoadsApplication.class
+com\projeto\ads\ServletInitializer.class
+com\projeto\ads\controller\IndexController.class
+com\projeto\ads\model\Usuario.class
+com\projeto\ads\model\Role.class
