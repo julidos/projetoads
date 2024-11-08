@@ -16,8 +16,8 @@ public class ServiceEmail {
 		SimpleMailMessage mensagem= new SimpleMailMessage();
 		mensagem.setFrom(remetente);
 		mensagem.setTo(email);
-		mensagem.setSubject(assunto);
 		mensagem.setText(corpo);
+		mensagem.setSubject(assunto);
 		javaMailSender.send(mensagem);
 	}
 }

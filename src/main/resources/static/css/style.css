@@ -1,0 +1,37 @@
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.content {
+    flex: 1 0 auto;
+    padding: 20px 0;
+}
+
+footer {
+    flex-shrink: 0;
+    margin-top: auto;
+}
+
+/* Estilos adicionais para melhorar a aparência */
+.table {
+    margin-top: 20px;
+}
+
+.btn {
+    margin: 2px;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.text-center {
+    margin: 15px 0;
+} 

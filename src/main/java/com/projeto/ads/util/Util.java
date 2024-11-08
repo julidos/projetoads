@@ -6,8 +6,8 @@ public class Util {
    
     
     public static String generateToken() {
-        String token = UUID.randomUUID().toString();
-        token = token.replaceAll("-", "").toLowerCase();
+    	UUID uuid = UUID.randomUUID();
+    	String token = uuid.toString().replaceAll("-", "").toLowerCase();
         return token;
     }
 }

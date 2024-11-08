@@ -19,10 +19,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.projeto.ads.model.Role;
 import com.projeto.ads.model.Usuario;
 import com.projeto.ads.repository.RoleRepository;
 import com.projeto.ads.repository.UsuarioRepository;
 import com.projeto.ads.service.ServiceEmail;
+import com.projeto.ads.service.UserService;
 import com.projeto.ads.util.Util;
 
 
@@ -33,6 +35,9 @@ public class UsuarioController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+	@Autowired
+	UserService userService;
+    
     @Autowired
     private RoleRepository roleRepository;
 
@@ -80,54 +85,37 @@ public class UsuarioController {
     public ModelAndView salvarUsuario(
         @ModelAttribute Usuario user, 
         @RequestParam("confirmPassword") String confirmPassword,
-        @RequestParam("dataNasc") String dataNasc,
+        @RequestParam("dataNasc") String dataNascimentoString,
         @RequestParam("roleUser") String roleUser
     ) {
         ModelAndView mv = new ModelAndView();
-
-        if(user.getPassword().length() < 8) {
-            mv.setViewName("Login/cadastro");
-            mv.addObject("error", "A senha possuí menos de 8 dígitos");
-            mv.addObject("roles", roleRepository.findAll());
-            return mv;
-        }
-
-        if(!user.getPassword().equals(confirmPassword)) {
-            mv.setViewName("Login/cadastro");
-            mv.addObject("error", "As senhas não correspondem");
-            mv.addObject("roles", roleRepository.findAll());
-            return mv;
-        }
+        String error= userService.validaErros(user, confirmPassword, dataNascimentoString);
+        if (error.length()> 1) {
+        	mv.addObject("usuario", new Usuario());
+        	mv.addObject("roles", roleRepository.findAll());
+        	mv.addObject("error", error);
+        	mv.setViewName("Login/cadastro");
+        	return mv;
+        	}
         Date dataFormatada = null;
 
         try {
-            SimpleDateFormat formataEntrada = new SimpleDateFormat("yyyy-MM-dd");
-            dataFormatada = formataEntrada.parse(dataNasc);
-        } catch (ParseException error) {
-            error.printStackTrace();
+            SimpleDateFormat formatoEntrada = new SimpleDateFormat("yyyy-MM-dd");
+            dataFormatada = formatoEntrada.parse(dataNascimentoString);
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
 
         user.setDataNascimento(dataFormatada);
+        Role role = roleRepository.findByNome(roleUser);
+        user.setRole(role);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setUsername(user.getEmail());
-
-        Usuario aux = userRepository.findByUsername(user.getUsername());
-
-        if(aux == null) {
-            user.setRole(roleRepository.findByNome(roleUser));
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-    
-            userRepository.save(user);
-    
-            mv.setViewName("redirect:/login");
-            
-            return mv;
-        } else {
-            mv.setViewName("Login/cadastro");
-            mv.addObject("error", "Usuário já foi cadastrado");
-            mv.addObject("roles", roleRepository.findAll());
-            return mv;
-        }
+        userRepository.save(user);
+        mv.setViewName("redirect:/login");
+        return mv;
     }
+
 
     @GetMapping("/usuario/recuperar")
     public ModelAndView recuperarSenha() {
@@ -138,60 +126,52 @@ public class UsuarioController {
     }
 
     @PostMapping("/usuario/recuperar")
-    public ModelAndView recuperarSenha(@ModelAttribute Usuario usuario, 
-    									RedirectAttributes redirect) {
+    public ModelAndView recuperarSenha(Usuario user, RedirectAttributes redirectAttributes) throws Exception {
         ModelAndView mv = new ModelAndView();
-        Usuario aux = userRepository.findByEmail(usuario.getEmail());
+        Usuario aux = userRepository.findByEmail(user.getEmail());
         if (aux == null) {
-            mv.addObject("usuario", new Usuario());
             mv.setViewName("Login/recuperar");
-            mv.addObject("error", "Email não encontrado");
+            mv.addObject("msg", "Email não encontrado");
             return mv;
         }
-        aux.setToken(Util.generateToken());
-        userRepository.save(aux);
-        String mensagem="use esse token para recuperar sua senha:"+aux.getToken();
-        //serviceEmail.sendEmail("senaclpoo@gmail.com", aux.getEmail(), mensagem, "Senac informa:Recupere senha plataforma gestão de aluno");
-        usuario.setToken("");
-        mv.addObject("usuario", aux);
-        redirect.addFlashAttribute("usuario", usuario);
-        mv.setViewName("redirect:/usuario/atualizarUsuario");
+        else {
+            aux.setToken(Util.generateToken());
+            userRepository.save(aux);
+            String msg="use esse token para recuperar sua senha:"+aux.getToken();
+            aux.setToken("");
+            mv.addObject("usuario", aux);
+            redirectAttributes.addFlashAttribute("usuario", aux);
+            serviceEmail.sendEmail("senaclpoo@gmail.com", aux.getEmail(), "Recuperação de Senha", msg);
+            mv.setViewName("redirect:/usuario/atualizarUsuario");
+        }
         return mv;
     }
     	@GetMapping("/usuario/atualizarUsuario")
-    	public ModelAndView updatePass (Usuario usuario) {
+    	public ModelAndView updatePassword (Usuario user) {
     		ModelAndView mv = new ModelAndView();
-    		mv.addObject("usuario", usuario);
+    		mv.addObject("usuario", user);
     		mv.setViewName("Login/atualizar");
     		return mv;
     	}
+    	
     	@PostMapping("/usuario/atualizarUsuario")
-    	public ModelAndView updatePassPost (@ModelAttribute Usuario usuario,
-    										@RequestParam("confirmPassword") String confirmPassword,
-    										@RequestParam("email") String email) {
+    	public ModelAndView updatePassPost (@ModelAttribute Usuario user, @RequestParam("confirmPassword") String confirmPassword) throws Exception {
     		ModelAndView mv = new ModelAndView();
-    		Usuario aux= userRepository.findByEmail(email);
-    		if(!aux.getToken().equals(usuario.getToken())) {
+    		Usuario aux= userRepository.findByEmail(user.getEmail());
+    		if (aux == null || !user.getToken().equals(aux.getToken())) {
+    			mv.addObject("msg", "Token não encontrado!");
+    			mv.addObject("usuario", user);
     			mv.setViewName("Login/atualizar");
-    			mv.addObject("error","token não confere");
-    			mv.addObject("usuario", usuario);
+    			} else {
+    			aux.setToken("");
+    			aux.setPassword(passwordEncoder.encode(user.getPassword()));
+    			userRepository.save(aux);
+    			mv.addObject("usuario", new Usuario());
+    			mv.setViewName("Login/login");
+    			}
     			return mv;
-    		}
-    		if (usuario.getPassword().equals(confirmPassword)|| confirmPassword.length()<8) {
-    		String erro= confirmPassword.length()<8? "Senha precisa ter no minimo tamanho 8!":"Senhas não conferem!";
-    		mv.setViewName("Login/atualizar");
-			mv.addObject("error","erro");
-			mv.addObject("usuario", usuario);
-			return mv;
-    		}
-    		aux.setToken("");
-    		aux.setPassword(passwordEncoder.encode(confirmPassword));
-    		userRepository.save(aux);
-    		mv.addObject("usuario", new Usuario());
-    		mv.setViewName("redirect:/login");
-    		
-    		return mv;
-    	}
+    			}
+
 
 }
 

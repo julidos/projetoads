@@ -39,5 +39,15 @@ public class ServiceAluno {
 		}
 		
 	}
-
+	
+	public String alterarAluno (Aluno aluno, Long id) {
+		Aluno alunoExistente = alunoRepository.findByCpf(aluno.getCpf());
+		if((alunoExistente != null && alunoExistente.getId() == id)|| alunoExistente==null) {
+			alunoRepository.save(aluno);
+		} else {
+			return "Já existe um aluno cadastrado com o mesmo CPF !";
+		}
+		
+		return null;
+	}
 }
