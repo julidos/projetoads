@@ -17,25 +17,24 @@ import com.projeto.ads.repository.UsuarioRepository;
 @Service
 public class UserDetail implements UserDetailsService {
 
-    @Autowired
-    UsuarioRepository usuarioRepository;
+        @Autowired
+        UsuarioRepository usuarioRepository;
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    
-        Usuario user = usuarioRepository.findByUsername(username);
-        
-        if (user == null) {
-            throw new UsernameNotFoundException("Usuário não existe");
+        @Override
+        public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
+                Usuario user = usuarioRepository.findByUsername(username);
+
+                if (user == null) {
+                        throw new UsernameNotFoundException("Usuário não existe");
+                }
+
+                Set < GrantedAuthority > authorities = Collections.singleton(
+                        new SimpleGrantedAuthority(user.getRole().getNome())
+                );
+
+                return new org.springframework.security.core.userdetails.User(
+                        username, user.getPassword(), authorities
+                );
         }
-
-        Set<GrantedAuthority> authorities = Collections.singleton(
-            new SimpleGrantedAuthority(user.getRole().getNome())
-        );
-        
-        return new org.springframework.security.core.userdetails.User(
-        username, user.getPassword(), authorities
-        );
-    }
 }
-

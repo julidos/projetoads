@@ -15,8 +15,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement
 @EnableAutoConfiguration
 public class ProjetoadsApplication {
-	public static void main(String[] args) {
-		SpringApplication.run(ProjetoadsApplication.class, args);
-	}
+        public static void main(String[] args) {
+                SpringApplication.run(ProjetoadsApplication.class, args);
+        }
 
 }

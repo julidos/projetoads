@@ -2,10 +2,8 @@ package com.projeto.ads.model;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-
 import java.util.Date;
 import java.util.Objects;
-
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -17,113 +15,111 @@ import javax.persistence.TemporalType;
 
 import javax.persistence.JoinColumn;
 
-
 @Entity
-@Table(name="usuarios")//No SQL
+@Table(name = "usuarios")
 public class Usuario {
 
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private Long id;
-	
-	@Column(unique=true)
-	private String email;
-	
-	private String password;
-	
-	@Column (unique=true)
-	private String username;
-	
-	@Temporal(TemporalType.DATE)
-	private Date dataNascimento;
-	
-	private boolean ativo;
-	private String token;
-	
-	@ManyToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="role_id")
-	private Role role;
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private Long id;
 
-	public Long getId() {
-		return id;
-	}
+        @Column(unique = true)
+        private String email;
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+        private String password;
 
-	public String getEmail() {
-		return email;
-	}
+        @Column(unique = true)
+        private String username;
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+        @Temporal(TemporalType.DATE)
+        private Date dataNascimento;
 
-	public String getPassword() {
-		return password;
-	}
+        private boolean ativo;
+        private String token;
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+        @ManyToOne(fetch = FetchType.EAGER)
+        @JoinColumn(name = "role_id")
+        private Role role;
 
-	public String getUsername() {
-		return username;
-	}
+        public Long getId() {
+                return id;
+        }
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
+        public void setId(Long id) {
+                this.id = id;
+        }
 
-	public Date getDataNascimento() {
-		return dataNascimento;
-	}
+        public String getEmail() {
+                return email;
+        }
 
-	public void setDataNascimento(Date dataNascimento) {
-		this.dataNascimento = dataNascimento;
-	}
+        public void setEmail(String email) {
+                this.email = email;
+        }
 
-	public boolean isAtivo() {
-		return ativo;
-	}
+        public String getPassword() {
+                return password;
+        }
 
-	public void setAtivo(boolean ativo) {
-		this.ativo = ativo;
-	}
+        public void setPassword(String password) {
+                this.password = password;
+        }
 
-	public String getToken() {
-		return token;
-	}
+        public String getUsername() {
+                return username;
+        }
 
-	public void setToken(String token) {
-		this.token = token;
-	}
+        public void setUsername(String username) {
+                this.username = username;
+        }
 
-	public Role getRole() {
-		return role;
-	}
+        public Date getDataNascimento() {
+                return dataNascimento;
+        }
 
-	public void setRole(Role role) {
-		this.role = role;
-	}
+        public void setDataNascimento(Date dataNascimento) {
+                this.dataNascimento = dataNascimento;
+        }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(id);
-	}
+        public boolean isAtivo() {
+                return ativo;
+        }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Usuario other = (Usuario) obj;
-		return Objects.equals(id, other.id);
-	}
-	
-	
+        public void setAtivo(boolean ativo) {
+                this.ativo = ativo;
+        }
+
+        public String getToken() {
+                return token;
+        }
+
+        public void setToken(String token) {
+                this.token = token;
+        }
+
+        public Role getRole() {
+                return role;
+        }
+
+        public void setRole(Role role) {
+                this.role = role;
+        }
+
+        @Override
+        public int hashCode() {
+                return Objects.hash(id);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+                if (this == obj)
+                        return true;
+                if (obj == null)
+                        return false;
+                if (getClass() != obj.getClass())
+                        return false;
+                Usuario other = (Usuario) obj;
+                return Objects.equals(id, other.id);
+        }
+
 }
