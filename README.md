@@ -56,7 +56,7 @@
   <li><strong>Spring Data JPA:</strong> utilizado para persistência de dados com base em repositórios e queries automáticas</li>
   <li><strong>Thymeleaf:</strong> motor de templates para renderização dinâmica do conteúdo HTML</li>
   <li><strong>Maven:</strong> para gerenciamento de dependências e build do projeto</li>
-  <li><strong>H2 Database (ou outro relacional):</strong> como banco de dados relacional para testes locais</li>
+  <li><strong>PostgreSQL:</strong> banco de dados relacional utilizado para armazenar as informações da aplicação</li>
 </ul>
 
 <hr>
@@ -69,7 +69,7 @@
   <li><a href="https://spring.io/projects/spring-data-jpa">Spring Data JPA</a></li>
   <li><a href="https://www.thymeleaf.org/">Thymeleaf</a></li>
   <li><a href="https://maven.apache.org/">Apache Maven</a></li>
-  <li>Banco de dados relacional (H2, MySQL ou outro)</li>
+  <li><a href="https://www.postgresql.org/">PostgreSQL</a></li>
 </ul>
 
 <hr>
@@ -101,7 +101,7 @@
 <ol>
   <li>Clone o repositório</li>
   <li>Importe como projeto Maven em sua IDE (IntelliJ, Eclipse, VSCode...)</li>
-  <li>Configure as credenciais do banco de dados em <code>src/main/resources/application.properties</code></li>
+  <li>Configure as credenciais do banco de dados PostgreSQL em <code>src/main/resources/application.properties</code></li>
   <li>Execute a classe principal do projeto</li>
   <li>Acesse <code>http://localhost:8080</code> para utilizar o sistema</li>
 </ol>
